@@ -1,8 +1,72 @@
 body {
-  font-family: sans-serif;
-  padding: 20px;
+    font-family: sans-serif;
+    padding: 20px;
+    background-color: #f8f9fa;
 }
 
-ul {
-  padding-left: 20px;
+/* Form Input & Tombol Tambah */
+div {
+    margin-bottom: 15px;
+}
+
+input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 6px;
+}
+
+#tambah {
+    padding: 8px 14px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* List Buku */
+ul.data-buku, ul {
+    padding-left: 0 !important;
+    list-style: none !important; /* Menghilangkan titik bulatan */
+    width: 320px; /* Lebar kotak disamakan */
+}
+
+/* Biar teks di kiri & tombol di kanan lurus sejajar */
+ul li {
+    background: white;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Dorong tombol ke kanan */
+}
+
+/* Kelompok Tombol Edit & Hapus */
+.action-btn {
+    display: flex !important;
+    gap: 6px; /* Jarak antara tombol Edit & Hapus */
+}
+
+/* Styling Tombol Edit */
+button.btn-edit, button[onclick*="editBuku"] {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Styling Tombol Hapus */
+button.btn-hapus, button[onclick*="hapusBuku"] {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
 }
