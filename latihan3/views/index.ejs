@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pustaka Digital</title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <header class="mb-6 text-center">
+      <h1 class="text-3xl font-bold text-blue-600">📚 Pustaka Digital</h1>
+      <p class="text-gray-600">Kelola koleksi buku dan penulis favoritmu dengan mudah</p>
+    </header>
+
+    <!-- Navigasi & Tambah -->
+    <div class="flex justify-between items-center mb-6">
+      <div class="flex gap-2">
+        <a href="/" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium shadow">Tampilkan Semua</a>
+        <a href="/books" class="px-4 py-2 bg-white text-gray-700 border rounded-lg font-medium hover:bg-gray-50">Daftar Buku</a>
+        <a href="/authors" class="px-4 py-2 bg-white text-gray-700 border rounded-lg font-medium hover:bg-gray-50">Daftar Penulis</a>
+      </div>
+      
+      <a href="/tambah" class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg shadow hover:bg-green-700 transition flex items-center gap-1">
+        ➕ Tambah Buku
+      </a>
+    </div>
+
+    <!-- WADAH DATA -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-semibold mb-4 text-purple-600 border-b pb-2">Semua Data Katalog</h2>
+      
+      <ul class="space-y-3">
+        <% books.forEach(book => { %>
+          <li class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-center shadow-sm">
+            <div>
+              <span class="font-bold text-gray-800 block text-lg"><%= book.title %></span>
+              <span class="text-sm text-gray-600 block mt-1">Penulis: <strong class="text-gray-800"><%= book.author %></strong></span>
+            </div>
+            
+            <div class="flex gap-2">
+              <a href="/edit/<%= book.id %>" class="px-3.5 py-1.5 text-xs bg-amber-500 text-white rounded-md hover:bg-amber-600 font-medium flex items-center">
+                Edit
+              </a>
+              <a href="/hapus/<%= book.id %>" class="px-3.5 py-1.5 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 font-medium flex items-center">
+                Hapus
+              </a>
+            </div>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>
