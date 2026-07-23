@@ -1,59 +1,138 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Middleware agar Express bisa membaca JSON dari request body
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Data Dummy (In-Memory Data)
-const books = [
-  { id: 1, title: "Laskar Pelangi", authorId: 1 },
-  { id: 2, title: "Bumi Manusia", authorId: 2 }
+// ----------------------------------------------------
+// VARIABEL DIPISAH (BERDIRI SENDIRI-SENDIRI)
+// ----------------------------------------------------
+let books = [
+  { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata" },
+  { id: 2, title: "Bumi Manusia", author: "Pramoedya Ananta Toer" },
+  { id: 3, title: "Laut Pasang", author: "Lillpudu" }
 ];
 
-const authors = [
-  { id: 1, name: "Andrea Hirata" },
-  { id: 2, name: "Pramoedya Ananta Toer" }
+let authors = [
+  "Andrea Hirata",
+  "Pramoedya Ananta Toer",
+  "Lillpudu"
 ];
 
-// --- ENDPOINT BOOKS ---
-
-// GET: Ambil semua buku
-app.get('/api/books', (req, res) => {
-  res.json({ success: true, data: books });
+// 1. HALAMAN UTAMA
+app.get('/', (req, res) => {
+  res.render('index', { books });
 });
 
-// GET: Ambil buku berdasarkan ID
-app.get('/api/books/:id', (req, res) => {
-  const book = books.find(b => b.id === parseInt(req.params.id));
-  if (!book) return res.status(404).json({ success: false, message: "Buku tidak ditemukan" });
-  res.json({ success: true, data: book });
+// 2. TAMBAH BUKU
+app.get('/tambah', (req, res) => {
+  res.render('tambah');
 });
 
-// POST: Tambah buku baru
-app.post('/api/books', (req, res) => {
-  const { title, authorId } = req.body;
-  if (!title || !authorId) {
-    return res.status(400).json({ success: false, message: "Title dan authorId wajib diisi" });
+app.post('/tambah', (req, res) => {
+  const { title, author } = req.body;
+  if (title && author) {
+    const newBook = {
+      id: books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1,
+      title: title,
+      author: author
+    };
+    books.push(newBook);
+
+    // Otomatis masukkan penulis ke daftar jika namanya belum ada
+    if (!authors.includes(author)) {
+      authors.push(author);
+    }
   }
-
-  const newBook = {
-    id: books.length + 1,
-    title,
-    authorId
-  };
-  books.push(newBook);
-  res.status(201).json({ success: true, data: newBook });
+  res.redirect('/');
 });
 
-// --- ENDPOINT AUTHORS ---
-
-// GET: Ambil semua penulis
-app.get('/api/authors', (req, res) => {
-  res.json({ success: true, data: authors });
+// 3. EDIT BUKU
+app.get('/edit/:id', (req, res) => {
+  const bookId = parseInt(req.params.id);
+  const book = books.find(b => b.id === bookId);
+  if (!book) return res.redirect('/');
+  
+  res.render('edit', { type: 'book', book });
 });
 
-// Jalankan Server
+app.post('/edit/:id', (req, res) => {
+  const bookId = parseInt(req.params.id);
+  const { title, author } = req.body;
+  
+  const book = books.find(b => b.id === bookId);
+  if (book) {
+    book.title = title;
+    book.author = author;
+
+    // Jika nama penulis belum ada di array authors, tambahkan
+    if (author && !authors.includes(author)) {
+      authors.push(author);
+    }
+  }
+  res.redirect('/');
+});
+
+// 4. HAPUS BUKU (Hanya menghapus dari array books)
+app.get('/hapus/:id', (req, res) => {
+  const bookId = parseInt(req.params.id);
+  books = books.filter(b => b.id !== bookId);
+  
+  // Mengembalikan ke halaman asal tempat tombol diklik (index / books)
+  const backUrl = req.get('Referrer') || '/';
+  res.redirect(backUrl);
+});
+
+// 5. DAFTAR BUKU
+app.get('/books', (req, res) => {
+  res.render('books', { books });
+});
+
+// 6. DAFTAR PENULIS (Menggunakan variabel authors terpisah)
+app.get('/authors', (req, res) => {
+  res.render('authors', { authors });
+});
+
+// EDIT PENULIS (Hanya mengubah nama di array authors & nama di daftar buku)
+app.get('/edit-author/:name', (req, res) => {
+  const oldAuthor = req.params.name;
+  res.render('edit', { type: 'author', oldAuthor });
+});
+
+app.post('/edit-author/:name', (req, res) => {
+  const oldAuthor = req.params.name;
+  const { newAuthor } = req.body;
+
+  if (newAuthor) {
+    // 1. Update nama di array authors
+    const index = authors.indexOf(oldAuthor);
+    if (index !== -1) {
+      authors[index] = newAuthor;
+    }
+
+    // 2. Update nama penulis di array books yang terkait
+    books.forEach(book => {
+      if (book.author === oldAuthor) {
+        book.author = newAuthor;
+      }
+    });
+  }
+  res.redirect('/authors');
+});
+
+// HAPUS PENULIS (Hanya menghapus dari array authors saja)
+app.get('/hapus-author/:name', (req, res) => {
+  const authorToDelete = req.params.name;
+  authors = authors.filter(a => a !== authorToDelete);
+  res.redirect('/authors');
+});
+
+// JALANKAN SERVER
 app.listen(PORT, () => {
   console.log(`Server berjalan di http://localhost:${PORT}`);
 });
