@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit <%= type === 'book' ? 'Buku' : 'Penulis' %></title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+  <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mt-10">
+    <h2 class="text-2xl font-bold mb-6 text-amber-500 border-b pb-2">
+      ✏️ Edit <%= type === 'book' ? 'Buku' : 'Nama Penulis' %>
+    </h2>
+    
+    <% if (type === 'book') { %>
+      <!-- FORM EDIT BUKU -->
+      <form action="/edit/<%= book.id %>" method="POST" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Judul Buku</label>
+          <input type="text" name="title" value="<%= book.title %>" required class="w-full border rounded p-2 text-sm focus:outline-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Penulis</label>
+          <input type="text" name="author" value="<%= book.author %>" required class="w-full border rounded p-2 text-sm focus:outline-blue-500">
+        </div>
+        <div class="flex justify-between items-center mt-6">
+          <a href="/" class="px-4 py-2 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400">Batal</a>
+          <button type="submit" class="px-4 py-2 bg-amber-500 text-white rounded text-sm hover:bg-amber-600 font-medium">Update Buku</button>
+        </div>
+      </form>
+
+    <% } else if (type === 'author') { %>
+      <!-- FORM EDIT PENULIS -->
+      <form action="/edit-author/<%= encodeURIComponent(oldAuthor) %>" method="POST" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Penulis</label>
+          <input type="text" name="newAuthor" value="<%= oldAuthor %>" required class="w-full border rounded p-2 text-sm focus:outline-blue-500">
+        </div>
+        <div class="flex justify-between items-center mt-6">
+          <a href="/authors" class="px-4 py-2 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400">Batal</a>
+          <button type="submit" class="px-4 py-2 bg-amber-500 text-white rounded text-sm hover:bg-amber-600 font-medium">Update Penulis</button>
+        </div>
+      </form>
+    <% } %>
+  </div>
+</body>
+</html>
